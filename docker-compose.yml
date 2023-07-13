@@ -1,0 +1,21 @@
+version: '3.9'
+
+#networks:
+#  dev_network:
+
+services:
+
+  postgresql-diploma:
+    image: postgres:14.3-alpine3.16
+    ports:
+      - "5400:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234_secret
+      POSTGRES_DB: ordershub_db
+    container_name: postgresql-diploma-container
+  #    networks:
+  #      dev_network:
+  #        aliases:
+  #          - db-postgre
+
