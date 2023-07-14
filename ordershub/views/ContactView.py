@@ -1,19 +1,19 @@
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 
 from ordershub.models import Contact
 from ordershub.serializers import ContactSerializer
 
 
-class ContactView(ViewSet):
+class ContactView(APIView):
     """
     Класс для работы с контактами покупателей
     """
 
     # получить мои контакты
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
         contact = Contact.objects.filter(
@@ -22,12 +22,13 @@ class ContactView(ViewSet):
         return Response(serializer.data)
 
     # добавить новый контакт
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
         if {'city', 'street', 'phone'}.issubset(request.data):
-            request.data._mutable = True
+            if isinstance(request.data, QueryDict):
+                request.data._mutable = True
             request.data.update({'user': request.user.id})
             serializer = ContactSerializer(data=request.data)
 
@@ -40,13 +41,13 @@ class ContactView(ViewSet):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
     # удалить контакт
-    def destroy(self, request, *args, **kwargs):
+    def delete(self, request):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
-        items_sting = request.data.get('items')
-        if items_sting:
-            items_list = items_sting.split(',')
+        items_string = request.data.get('items')
+        if items_string:
+            items_list = items_string.split(',')
             query = Q()
             objects_deleted = False
             for contact_id in items_list:
@@ -56,11 +57,13 @@ class ContactView(ViewSet):
 
             if objects_deleted:
                 deleted_count = Contact.objects.filter(query).delete()[0]
-                return JsonResponse({'Status': True, 'Удалено объектов': deleted_count})
-        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+                return JsonResponse({'Status': True, 'Удалено объектов': deleted_count},
+                                    json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'},
+                            json_dumps_params={'ensure_ascii': False})
 
     # редактировать контакт
-    def update(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 

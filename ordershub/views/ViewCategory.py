@@ -1,10 +1,10 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListAPIView
 
 from ordershub.models import Category
 from ordershub.serializers import ProductSerializer
 
 
-class ViewCategory(ModelViewSet):
+class ViewCategory(ListAPIView):
     """
     Класс для просмотра категорий
     """

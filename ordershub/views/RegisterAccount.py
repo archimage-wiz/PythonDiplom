@@ -1,18 +1,18 @@
 from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, QueryDict
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 
 from ordershub.serializers import UserSerializer
 from ordershub.signals import new_user_registered
 
 
-class RegisterAccount(ViewSet):
+class RegisterAccount(APIView):
     """
     Для регистрации покупателей
     """
 
     # Регистрация методом POST
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
 
         # проверяем обязательные аргументы
         if {'first_name', 'last_name', 'email', 'password', 'company', 'position'}.issubset(request.data):

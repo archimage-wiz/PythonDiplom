@@ -1,22 +1,24 @@
 from django.db.models import Q
 from django.http import JsonResponse
-from rest_framework.viewsets import ViewSet
+from rest_framework import status
+from rest_framework.views import APIView
 
-from ordershub.models import Product, ProductInfo
-from ordershub.serializers import ProductInfoSerializer, ProductSerializer
+from ordershub.models import ProductInfo
+from ordershub.serializers import ProductInfoSerializer
 
 
-class ViewProducts(ViewSet):
+class ViewProducts(APIView):
     """
     Класс для поиска товаров.
     """
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    http_method_names = ['get']
 
-    def list(self, request):
+    def get(self, request):
         shop_id = request.query_params.get('shop_id')
         category_id = request.query_params.get('category_id')
+        if not shop_id and not category_id:
+            return JsonResponse({"Status": "error",
+                                 "detail": "Shop or Category must be provided."},
+                                status=status.HTTP_400_BAD_REQUEST)
         query = Q(shop__state=True)
         query = query & Q(shop_id=shop_id) if shop_id else query
         query = query & Q(product__category_id=category_id) if category_id else query

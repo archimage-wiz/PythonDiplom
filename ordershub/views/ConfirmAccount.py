@@ -1,16 +1,16 @@
 from django.http import JsonResponse
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 
 from ordershub.models import ConfirmEmailToken
 
 
-class ConfirmAccount(ViewSet):
+class ConfirmAccount(APIView):
     """
     Класс для подтверждения почтового адреса
     """
 
     # Регистрация методом POST
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
 
         # проверяем обязательные аргументы
         if {'email', 'token'}.issubset(request.data):

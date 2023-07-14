@@ -3,18 +3,18 @@ import yaml
 from django.core.validators import URLValidator
 from django.http import JsonResponse
 from rest_framework.exceptions import ValidationError
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 from yaml import Loader
 
 from ordershub.models import Product, Shop, Category, ProductInfo, Parameter, ProductParameter
 
 
-class PartnerUpdate(ViewSet):
+class PartnerUpdate(APIView):
     """
     Класс для обновления прайса от поставщика
     """
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 

@@ -4,97 +4,9 @@
 
 
 
-
-###
-POST {{baseUrl}}/api/v1/api-token-auth
-Content-Type: application/json
-
-{
-    "username": "username1",
-    "password": "111"
-}
-
-###
-POST {{baseUrl}}/api/v1/user/auth/reg/
-Content-Type: application/json
-
-{
-    "email": "test@user.com",
-    "password": "111"
-}
-
-
-###
-POST {{baseUrl}}/api/v1/user/auth/auth/
-Content-Type: application/json
-
-{
-    "email": "test@user.com",
-    "password": "111"
-}
-
-###
-POST {{baseUrl}}/api/v1/user/auth/test/
-Content-Type: application/json
-Authorization: Token 3846ec306d6a5fc845d7470e6a36049f03b47fb5
-
-{
-    "somedata": "1"
-}
-
-###
-POST {{baseUrl}}/api/v1/token/
-Content-Type: application/json
-
-{
-    "email": "test@user.com",
-    "password": "111"
-}
-###
-POST {{baseUrl}}/api/v1/token/verify/
-Content-Type: application/json
-
-{
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg5MTYwMDI5LCJpYXQiOjE2ODkxNTk3MjksImp0aSI6IjliMDFjYTgwZGQwMDRiMmViOTIwYTBjYzZiNGUwOGQ2IiwidXNlcl9pZCI6MX0.pKjIGH64ZT9LxxYGBhMwrb-ijqc2YLsrEteWFLeiuSU",
-    "password": "111"
-}
-###
-POST {{baseUrl}}/api/v1/token/refresh/
-Content-Type: application/json
-
-{
-    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4OTI0NjA3MywiaWF0IjoxNjg5MTU5NjczLCJqdGkiOiI5ODYxYjc4Njk2Y2Y0NzU1ODBiZmIxMzQ0N2RmYzlmOSIsInVzZXJfaWQiOjF9.UwelVn7E1Gyz9xRGm9Kt7zBfveON6l0dVMKlHNRLU_c"
-}
-
-
-###
-POST {{baseUrl}}/api/v1/partner-update/
-Content-Type: application/json
-Authorization: Token 3846ec306d6a5fc845d7470e6a36049f03b47fb5
-
-{
-    "url": "https://raw.githubusercontent.com/archimage-wiz/Python_Diploma/master/data/shop1.yaml"
-}
-
-
-###
-GET {{baseUrl}}/api/v1/products/?shop_id=2&category_id=224
-Content-Type: application/json
-###
-GET {{baseUrl}}/api/v1/shops/
-Content-Type: application/json
-###
-GET {{baseUrl}}/api/v1/category/
-Content-Type: application/json
-###
-GET {{baseUrl}}/api/v1/order/
-Content-Type: application/json
-Authorization: Token 3846ec306d6a5fc845d7470e6a36049f03b47fb5
-
-
 # register account
 ###
-POST {{baseUrl}}/api/v1/user/register/
+POST {{baseUrl}}/api/v1/user/register
 Content-Type: application/json
 
 {
@@ -103,15 +15,254 @@ Content-Type: application/json
     "first_name": "igor",
     "last_name": "potakhin",
     "company": "c1",
-    "position": "p1"
+    "position": "p1",
+    "type": "shop"
 }
 
 # confirm account
 ###
-POST {{baseUrl}}/api/v1/user/register/confirm/
+POST {{baseUrl}}/api/v1/user/register/confirm
 Content-Type: application/json
 
 {
-    "token": "e4b99860b6e",
+    "token": "13773026e6884b486b09c8b63eced0364e49e1dc2fa763b8",
     "email": "archimage@yandex.com"
 }
+
+# user login
+###
+POST {{baseUrl}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "email": "archimage@yandex.com",
+    "password": "87654321EEEE.ONE"
+}
+
+# got token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+# test token
+###
+# POST {{baseUrl}}/api/v1/user/auth
+GET {{baseUrl}}/api/v1/user/auth
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "email": "archimage@yandex.com",
+    "password": "87654321EEEE.ONE"
+}
+
+# get account details
+###
+GET {{baseUrl}}/api/v1/user/details
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "email": ""
+}
+
+# change account details (post method)
+###
+POST {{baseUrl}}/api/v1/user/details
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "email": "archimage@yandex.lol",
+    "password": "11111111!",
+    "first_name": "egor",
+    "last_name": "obtakhin",
+    "company": "google",
+    "position": "lead dev"
+}
+
+# get contacts
+###
+GET {{baseUrl}}/api/v1/user/contact
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+}
+
+# add new contact
+###
+POST {{baseUrl}}/api/v1/user/contact
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "city": "ptz",
+    "street": "lenina2",
+    "phone": "+792162317712"
+}
+
+# remove contact
+###
+DELETE {{baseUrl}}/api/v1/user/contact
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "items": "9,10,8"
+}
+
+# password reset test
+###
+POST {{baseUrl}}/api/v1/user/password_reset
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "email": "archimage@yandex.ru"
+}
+
+# password reset confirm
+###
+POST {{baseUrl}}/api/v1/user/password_reset/confirm
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "token": "de89642c7228df1",
+    "password": "11131313E"
+}
+
+# partner update via link
+###
+POST {{baseUrl}}/api/v1/partner/update
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "url": "https://raw.githubusercontent.com/archimage-wiz/Python_Diploma/master/data/shop1.yaml"
+}
+
+# partner get state
+###
+GET {{baseUrl}}/api/v1/partner/state
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+}
+
+# partner update state
+###
+POST {{baseUrl}}/api/v1/partner/state
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "state": "True"
+}
+
+# partner orders
+###
+GET {{baseUrl}}/api/v1/partner/orders
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{   
+}
+
+# view category
+###
+GET {{baseUrl}}/api/v1/categories
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{   
+}
+
+# view shops
+###
+GET {{baseUrl}}/api/v1/shops
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{   
+}
+
+# view products
+###
+GET {{baseUrl}}/api/v1/products?shop_id=3
+Content-Type: application/json
+
+{       
+}
+
+
+# basket retrieve
+###
+GET {{baseUrl}}/api/v1/basket
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{       
+}
+
+
+# basket add to basket 
+###
+POST {{baseUrl}}/api/v1/basket
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "items": [
+        {
+            "product_info": 13,
+            "quantity": 6
+        }
+    ]
+}
+
+# basket update in basket 
+###
+PUT {{baseUrl}}/api/v1/basket
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "items": [
+        {
+            "id": 14,
+            "quantity": 1
+        }
+    ]
+}
+
+# basket delete from basket 
+###
+DELETE {{baseUrl}}/api/v1/basket
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "items": "14,13"
+}
+
+# order get
+###
+GET {{baseUrl}}/api/v1/order
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "items": "14,13"
+}
+
+# order PUT FROM BASKET TO ORDER
+###
+POST {{baseUrl}}/api/v1/order
+Content-Type: application/json
+Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
+
+{
+    "id": "4",
+    "contact": "1"
+}
+

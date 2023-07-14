@@ -2,19 +2,19 @@ from distutils.util import strtobool
 
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 
 from ordershub.models import Shop
 from ordershub.serializers import ShopSerializer
 
 
-class PartnerState(ViewSet):
+class PartnerState(APIView):
     """
     Класс для работы со статусом поставщика
     """
 
     # получить текущий статус
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
@@ -26,7 +26,7 @@ class PartnerState(ViewSet):
         return Response(serializer.data)
 
     # изменить текущий статус
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 

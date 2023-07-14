@@ -2,14 +2,14 @@ from django.db import IntegrityError
 from django.db.models import Sum, F
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 
 from ordershub.models import Order
 from ordershub.serializers import OrderSerializer
 from ordershub.signals import new_order
 
 
-class ViewOrder(ViewSet):
+class ViewOrder(APIView):
     """
     Класс для получения и размещения заказов пользователями
     """
@@ -18,7 +18,7 @@ class ViewOrder(ViewSet):
     http_method_names = ['get', 'post']
 
     # получить мои заказы
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
         order = Order.objects.filter(
@@ -31,7 +31,7 @@ class ViewOrder(ViewSet):
         return Response(serializer.data)
 
     # разместить заказ из корзины
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
@@ -44,10 +44,17 @@ class ViewOrder(ViewSet):
                         state='new')
                 except IntegrityError as error:
                     print(error)
-                    return JsonResponse({'Status': False, 'Errors': 'Неправильно указаны аргументы'})
+                    return JsonResponse({'Status': False, 'Errors': 'Неправильно указаны аргументы'},
+                                        json_dumps_params={'ensure_ascii': False})
                 else:
                     if is_updated:
-                        new_order.send(sender=self.__class__, user_id=request.user.id)
-                        return JsonResponse({'Status': True})
+                        try:
+                            new_order.send(sender=self.__class__, user_id=request.user.id)
+                        except Exception as e:
+                            print(e)
+                            return JsonResponse({'Status': True, "Details": str(e)},
+                                                json_dumps_params={'ensure_ascii': False})
+                        return JsonResponse({'Status': True}, json_dumps_params={'ensure_ascii': False})
 
-        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'},
+                            json_dumps_params={'ensure_ascii': False})

@@ -1,18 +1,18 @@
 from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.views import APIView
 
 from ordershub.serializers import UserSerializer
 
 
-class AccountDetails(ViewSet):
+class AccountDetails(APIView):
     """
     Класс для работы данными пользователя
     """
 
     # получить данные
-    def create(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
@@ -25,7 +25,7 @@ class AccountDetails(ViewSet):
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
         # проверяем обязательные аргументы
 
-        if 'password' in request.data:
+        if 'password' in request.data:  # why able to change password if pasword reset via token?
             errors = {}
             # проверяем пароль на сложность
             try:

@@ -1,15 +1,17 @@
+import json
+
 from django.db import IntegrityError
 from django.db.models import Sum, F, Q
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
-from ujson import loads as load_json
+from rest_framework.views import APIView
+from ujson import loads
 
 from ordershub.models import Order, OrderItem
 from ordershub.serializers import OrderSerializer, OrderItemSerializer
 
 
-class ViewBasket(ViewSet):
+class ViewBasket(APIView):
     """
     Класс для работы с корзиной пользователя
     """
@@ -17,7 +19,7 @@ class ViewBasket(ViewSet):
     serializer_class = OrderSerializer
     http_method_names = ['get', 'post', 'put', 'delete']
 
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
         basket = Order.objects.filter(
@@ -29,15 +31,15 @@ class ViewBasket(ViewSet):
         serializer = OrderSerializer(basket, many=True)
         return Response(serializer.data)
 
-    # редактировать корзину
-    def create(self, request, *args, **kwargs):
+    # добавить позиции корзину
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
         items_sting = request.data.get('items')
         if items_sting:
             try:
-                items_dict = load_json(items_sting)
+                items_dict = loads(json.dumps(items_sting))
             except ValueError:
                 return JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'})
             else:
@@ -50,7 +52,8 @@ class ViewBasket(ViewSet):
                         try:
                             serializer.save()
                         except IntegrityError as error:
-                            return JsonResponse({'Status': False, 'Errors': str(error)})
+                            return JsonResponse({'Status': False, 'Errors': str(error)},
+                                                json_dumps_params={'ensure_ascii': False})
                         else:
                             objects_created += 1
 
@@ -58,11 +61,12 @@ class ViewBasket(ViewSet):
 
                         return JsonResponse({'Status': False, 'Errors': serializer.errors})
 
-                return JsonResponse({'Status': True, 'Создано объектов': objects_created})
+                return JsonResponse({'Status': True, 'Создано объектов': objects_created},
+                                    json_dumps_params={'ensure_ascii': False})
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
     # удалить товары из корзины
-    def destroy(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
@@ -79,20 +83,23 @@ class ViewBasket(ViewSet):
 
             if objects_deleted:
                 deleted_count = OrderItem.objects.filter(query).delete()[0]
-                return JsonResponse({'Status': True, 'Удалено объектов': deleted_count})
-        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+                return JsonResponse({'Status': True, 'Удалено объектов': deleted_count},
+                                    json_dumps_params={'ensure_ascii': False}, safe=True)
+        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'},
+                            json_dumps_params={'ensure_ascii': False}, safe=True)
 
-    # добавить позиции в корзину
-    def update(self, request, *args, **kwargs):
+    # обновить позиции в корзину
+    def put(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
 
-        items_sting = request.data.get('items')
+        items_sting = request.data.get("items")
         if items_sting:
             try:
-                items_dict = load_json(items_sting)
+                items_dict = loads(json.dumps(items_sting))
             except ValueError:
-                return JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'})
+                return JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'},
+                                    json_dumps_params={'ensure_ascii': False}, safe=True)
             else:
                 basket, _ = Order.objects.get_or_create(user_id=request.user.id, state='basket')
                 objects_updated = 0
@@ -101,5 +108,7 @@ class ViewBasket(ViewSet):
                         objects_updated += OrderItem.objects.filter(order_id=basket.id, id=order_item['id']).update(
                             quantity=order_item['quantity'])
 
-                return JsonResponse({'Status': True, 'Обновлено объектов': objects_updated})
-        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
+                return JsonResponse({'Status': True, 'Обновлено объектов': objects_updated},
+                                    json_dumps_params={'ensure_ascii': False}, safe=True)
+        return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'},
+                            json_dumps_params={'ensure_ascii': False}, safe=True)
