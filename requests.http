@@ -245,7 +245,7 @@ Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
     "items": "14,13"
 }
 
-# order get
+# orders get
 ###
 GET {{baseUrl}}/api/v1/order
 Content-Type: application/json
