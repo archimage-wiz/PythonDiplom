@@ -25,7 +25,7 @@ POST {{baseUrl}}/api/v1/user/register/confirm
 Content-Type: application/json
 
 {
-    "token": "13773026e6884b486b09c8b63eced0364e49e1dc2fa763b8",
+    "token": "41db7734e446d25fa91b3215ea45b56e8833e5724050a3",
     "email": "archimage@yandex.com"
 }
 
@@ -266,3 +266,12 @@ Authorization: Token b6ad9a3e1bd6fddbff935cb7e1921997d8ffae82
     "contact": "1"
 }
 
+# check task status is complete
+###
+GET {{baseUrl}}/api/v1/task?task_id=cf6dcfc7-3a81-4acc-b68c-b3c50752f3db
+Content-Type: application/json
+Authorization: Token 1ac12613183f8bcdb38d59ce1ef44560c8a802fa
+
+{
+    
+}

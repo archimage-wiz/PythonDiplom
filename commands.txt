@@ -7,5 +7,6 @@ $ npm install -g redis-commander
 $ redis-commander
 
 command for starting celery app 
-> celery -A tasks.celery_app worker --loglevel=INFO -P eventlet
-> celery -A tasks.celery_app worker --loglevel=INFO (or without eventlet:)
+> source env/scripts/activate
+> celery -A orders worker --loglevel=INFO -P eventlet # (eventlet is for windows)
+

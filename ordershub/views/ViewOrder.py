@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ordershub.models import Order
-from ordershub.send_mail import new_order
 from ordershub.serializers import OrderSerializer
+from ordershub.tasks import new_order
 
 
 class ViewOrder(APIView):
@@ -49,12 +49,13 @@ class ViewOrder(APIView):
                 else:
                     if is_updated:
                         try:
-                            new_order(user_id=request.user.id)
+                            result = new_order.delay(user_id=request.user.id)
                         except Exception as e:
                             print(e)
                             return JsonResponse({'Status': True, "Details": str(e)},
                                                 json_dumps_params={'ensure_ascii': False})
-                        return JsonResponse({'Status': True}, json_dumps_params={'ensure_ascii': False})
-
+                        return JsonResponse({'Status': True,
+                                             'task_id': result.id
+                                             }, json_dumps_params={'ensure_ascii': False})
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'},
                             json_dumps_params={'ensure_ascii': False})

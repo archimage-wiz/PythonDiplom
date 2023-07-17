@@ -19,6 +19,7 @@ from ordershub.views.ViewCategory import ViewCategory
 from ordershub.views.ViewOrder import ViewOrder
 from ordershub.views.ViewProducts import ViewProducts
 from ordershub.views.ViewShop import ViewShop
+from ordershub.views.ViewTask import ViewTask
 
 base_api_path = 'api/v1/'
 
@@ -53,4 +54,6 @@ urlpatterns = [
     # path(base_api_path + 'products', ViewProducts.as_view(), name='products'),
     path(base_api_path + 'basket', ViewBasket.as_view(), name='basket'),
     path(base_api_path + 'order', ViewOrder.as_view(), name='order'),
+
+    path(base_api_path + 'task', ViewTask.as_view(), name="task")
 ]
