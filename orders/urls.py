@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
 from rest_framework.authtoken import views
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from ordershub.views.AccountDetails import AccountDetails
@@ -21,8 +22,14 @@ from ordershub.views.ViewShop import ViewShop
 
 base_api_path = 'api/v1/'
 
+router = DefaultRouter()
+router.register('products', ViewProducts, basename="products")
+router.register('shops', ViewShop, basename="shops")
+router.register('categories', ViewCategory, basename="categories")
+
 urlpatterns = [
     path("admin", admin.site.urls),
+    path(base_api_path, include(router.urls)),
     path(base_api_path + 'api-token-auth', views.obtain_auth_token),  # не работает почему?
     path(base_api_path + 'token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path(base_api_path + 'token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -41,9 +48,9 @@ urlpatterns = [
     path(base_api_path + 'user/password_reset', reset_password_request_token, name='password-reset'),
     path(base_api_path + 'user/password_reset/confirm', reset_password_confirm, name='password-reset-confirm'),
 
-    path(base_api_path + 'categories', ViewCategory.as_view(), name='categories'),
-    path(base_api_path + 'shops', ViewShop.as_view(), name='shops'),
-    path(base_api_path + 'products', ViewProducts.as_view(), name='shops'),
+    # path(base_api_path + 'categories', ViewCategory.as_view(), name='categories'),
+    # path(base_api_path + 'shops', ViewShop.as_view(), name='shops'),
+    # path(base_api_path + 'products', ViewProducts.as_view(), name='products'),
     path(base_api_path + 'basket', ViewBasket.as_view(), name='basket'),
     path(base_api_path + 'order', ViewOrder.as_view(), name='order'),
 ]

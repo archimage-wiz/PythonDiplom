@@ -1,10 +1,10 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.viewsets import ModelViewSet
 
 from ordershub.models import Shop
 from ordershub.serializers import ShopSerializer
 
 
-class ViewShop(ListAPIView):
+class ViewShop(ModelViewSet):
     """
     Класс для просмотра магазинов.
     """

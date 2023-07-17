@@ -2,8 +2,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse, QueryDict
 from rest_framework.views import APIView
 
+from ordershub.send_mail import new_user_registered
 from ordershub.serializers import UserSerializer
-from ordershub.signals import new_user_registered
 
 
 class RegisterAccount(APIView):
@@ -39,7 +39,7 @@ class RegisterAccount(APIView):
                     user = user_serializer.save()
                     user.set_password(request.data['password'])
                     user.save()
-                    new_user_registered.send(sender=self.__class__, user_id=user.id)
+                    new_user_registered(user_id=user.id)
                     return JsonResponse({'Status': True})
                 else:
                     return JsonResponse({'Status': False, 'Errors': user_serializer.errors})

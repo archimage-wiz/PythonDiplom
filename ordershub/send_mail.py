@@ -1,21 +1,10 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-from django.dispatch import receiver, Signal
-from django_rest_passwordreset.signals import reset_password_token_created
 
 from ordershub.models import ConfirmEmailToken, User
 
-new_user_registered = Signal(
-    'user_id'
-)
 
-new_order = Signal(
-    'user_id'
-)
-
-
-@receiver(reset_password_token_created)
-def password_reset_token_created(sender, instance, reset_password_token, **kwargs):
+def password_reset_token(sender, instance, reset_password_token, **kwargs):
     """
     Отправляем письмо с токеном для сброса пароля
     When a token is created, an e-mail needs to be sent to the user
@@ -40,8 +29,7 @@ def password_reset_token_created(sender, instance, reset_password_token, **kwarg
     msg.send()
 
 
-@receiver(new_user_registered)
-def new_user_registered_signal(user_id, **kwargs):
+def new_user_registered(user_id, **kwargs):
     """
     отправляем письмо с подтрердждением почты
     """
@@ -56,8 +44,7 @@ def new_user_registered_signal(user_id, **kwargs):
     msg.send()
 
 
-@receiver(new_order)
-def new_order_signal(user_id, **kwargs):
+def new_order(user_id, **kwargs):
     """
     отправяем письмо при изменении статуса заказа
     """
@@ -65,13 +52,9 @@ def new_order_signal(user_id, **kwargs):
     user = User.objects.get(id=user_id)
 
     msg = EmailMultiAlternatives(
-        # title:
-        f"Обновление статуса заказа",
-        # message:
-        'Заказ сформирован',
-        # from:
-        settings.EMAIL_HOST_USER,
-        # to:
-        [user.email]
+        subject=f"Обновление статуса заказа",
+        body='Заказ сформирован',
+        from_email=settings.EMAIL_HOST_USER,
+        to=[user.email]
     )
     msg.send()

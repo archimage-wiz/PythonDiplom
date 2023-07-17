@@ -1,0 +1,11 @@
+
+Commands txt help file
+
+
+command for install runnun RedisCommander (npm req.)
+$ npm install -g redis-commander
+$ redis-commander
+
+command for starting celery app 
+> celery -A tasks.celery_app worker --loglevel=INFO -P eventlet
+> celery -A tasks.celery_app worker --loglevel=INFO (or without eventlet:)

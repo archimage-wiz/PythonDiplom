@@ -1,18 +1,19 @@
 from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 
 from ordershub.models import ProductInfo
 from ordershub.serializers import ProductInfoSerializer
 
 
-class ViewProducts(APIView):
+class ViewProducts(ViewSet):
     """
     Класс для поиска товаров.
     """
+    http_method_names = ['get']
 
-    def get(self, request):
+    def list(self, request):
         shop_id = request.query_params.get('shop_id')
         category_id = request.query_params.get('category_id')
         if not shop_id and not category_id:

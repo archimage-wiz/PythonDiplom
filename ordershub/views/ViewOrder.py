@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ordershub.models import Order
+from ordershub.send_mail import new_order
 from ordershub.serializers import OrderSerializer
-from ordershub.signals import new_order
 
 
 class ViewOrder(APIView):
@@ -49,7 +49,7 @@ class ViewOrder(APIView):
                 else:
                     if is_updated:
                         try:
-                            new_order.send(sender=self.__class__, user_id=request.user.id)
+                            new_order(user_id=request.user.id)
                         except Exception as e:
                             print(e)
                             return JsonResponse({'Status': True, "Details": str(e)},

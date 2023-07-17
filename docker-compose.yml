@@ -19,3 +19,21 @@ services:
   #        aliases:
   #          - db-postgre
 
+  redis-d:
+    image: redis:7.0.0-alpine3.15
+    ports:
+      - "6379:6379"
+    # depends_on:
+    #   - postgresql-diploma
+    container_name: redis-diploma
+  #    networks:
+  #      dev_network:
+  #        aliases:
+  #          - db-redis
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    container_name: redis-commander
+  
